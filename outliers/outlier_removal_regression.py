@@ -26,7 +26,14 @@ ages_train, ages_test, net_worths_train, net_worths_test = train_test_split(ages
 ### fill in a regression here!  Name the regression object reg so that
 ### the plotting code below works, and you can see what your regression looks like
 
-
+from sklearn import linear_model
+from sklearn.metrics import r2_score
+import numpy as np
+reg = linear_model.LinearRegression()
+reg.fit(ages_train, net_worths_train)
+pred = reg.predict(ages_test)
+print 'Coefficient: %.2f' % reg.coef_[0][0]
+print 'The r2_score: %.2f' % r2_score(net_worths_test, pred)
 
 
 
@@ -49,11 +56,19 @@ cleaned_data = []
 try:
     predictions = reg.predict(ages_train)
     cleaned_data = outlierCleaner( predictions, ages_train, net_worths_train )
+    print 'cleaned_data: ', cleaned_data
+    ages_train_cleaned = np.empty(shape = (len(cleaned_data), 1))
+    net_worths_train_cleaned = np.empty(shape = (len(cleaned_data), 1))    
+    for i in range(len(cleaned_data)):
+        ages_train_cleaned[i][0] = (cleaned_data[i][0])
+        net_worths_train_cleaned[i][0] = (cleaned_data[i][1])
+    reg.fit(ages_train_cleaned, net_worths_train_cleaned)
+    pred = reg.predict(ages_test)
+    print 'Coefficient_New: %.2f' % reg.coef_[0][0]
+    print 'The r2_score_New: %.2f' % r2_score(net_worths_test, pred)
 except NameError:
     print "your regression object doesn't exist, or isn't name reg"
     print "can't make predictions to use in identifying outliers"
-
-
 
 
 
